@@ -1,0 +1,83 @@
+@import "flowbite/src/themes/default";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
+
+
+@layer base {
+    :root {
+        /* Paleta Principal - Modo Claro */
+        --color-primary: 259 94% 51%;
+        /* Indigo-600 */
+        --color-secondary: 220 89% 63%;
+        /* Blue-500 */
+        --color-success: 22 89% 49%;
+        /* Orange-600 */
+        --color-danger: 347 90% 54%;
+        /* Red-500 */
+        --color-text-base: 224 71% 4%;
+        /* Gray-900 */
+        --color-bg-base: 0 0% 100%;
+        /* White */
+        --color-bg-muted: 220 14% 96%;
+        /* Gray-100 */
+
+        /* Colores del Sidebar - Modo Claro */
+        --color-sidebar-bg: 222 47% 11%;
+        /* Gray-800 */
+        --color-sidebar-text: 220 13% 69%;
+        /* Gray-400 */
+        --color-sidebar-text-hover: 0 0% 100%;
+        /* White */
+        --color-sidebar-text-active: 0 0% 100%;
+        /* White */
+        --color-sidebar-active-bg: 259 94% 51%;
+        /* Primary Color */
+    }
+
+    .dark {
+        /* Paleta Principal - Modo Oscuro */
+        --color-primary: 259 94% 65%;
+        --color-secondary: 220 89% 70%;
+        --color-success: 22 89% 60%;
+        --color-danger: 347 90% 65%;
+        --color-text-base: 220 14% 96%;
+        --color-bg-base: 224 71% 4%;
+        --color-bg-muted: 222 47% 11%;
+
+        /* Colores del Sidebar - Modo Oscuro */
+        --color-sidebar-bg: 224 71% 4%;
+        /* Mismo que el fondo base oscuro */
+        --color-sidebar-text: 220 13% 69%;
+        --color-sidebar-text-hover: 0 0% 100%;
+        --color-sidebar-text-active: 0 0% 100%;
+        --color-sidebar-active-bg: 259 94% 65%;
+        /* Primary Color (dark) */
+    }
+}
+
+.input-style {
+    @apply border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-primary focus:border-primary;
+}
+
+.btn-primary {
+    @apply px-4 py-2 font-bold text-white rounded-md bg-primary hover:bg-primary/90 disabled:opacity-50;
+}
+
+.btn-secondary {
+    @apply px-4 py-2 font-bold bg-gray-200 rounded-md text-gray-800 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
+}
+
+.input-style {
+    @apply border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 focus:ring-primary focus:border-primary;
+}
+
+.table-thead-colored {
+    @apply bg-primary/10 text-primary-700;
+}
+.dark .table-thead-colored {
+    @apply bg-primary/20 text-primary-200;
+}
