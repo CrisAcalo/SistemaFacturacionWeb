@@ -7,14 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, LogsActivity, HasRoles, SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -52,15 +53,56 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logFillable() // Alternativa a logAll(), más explícito
+            ->logOnly(['name', 'email', 'email_verified_at'])
             ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-            ->setDescriptionForEvent(fn(string $eventName) => "Se ha " . match($eventName) {
-                'created' => 'creado',
-                'updated' => 'actualizado',
-                'deleted' => 'eliminado',
-                'restored' => 'restaurado',
-                default => $eventName
-            } . " el usuario con ID: " . $this->id);
+            ->dontSubmitEmptyLogs();
+    }
+
+    /**
+     * Log cuando el usuario inicia sesión
+     */
+    public function logLogin(): void
+    {
+        activity('login')
+            ->causedBy($this)
+            ->performedOn($this)
+            ->withProperties(['ip' => request()->ip(), 'user_agent' => request()->userAgent()])
+            ->log('Usuario inició sesión');
+    }
+
+    /**
+     * Log cuando el usuario cierra sesión
+     */
+    public function logLogout(): void
+    {
+        activity('logout')
+            ->causedBy($this)
+            ->performedOn($this)
+            ->withProperties(['ip' => request()->ip()])
+            ->log('Usuario cerró sesión');
+    }
+
+    /**
+     * Log cuando un usuario es restaurado
+     */
+    public function logRestored(string $reason = null): void
+    {
+        activity('restored')
+            ->causedBy(auth()->user())
+            ->performedOn($this)
+            ->withProperties(['reason' => $reason ?? 'No se proporcionó motivo'])
+            ->log('Usuario restaurado');
+    }
+
+    /**
+     * Log cuando un usuario es eliminado definitivamente
+     */
+    public function logForceDeleted(string $reason = null): void
+    {
+        activity('forceDeleted')
+            ->causedBy(auth()->user())
+            ->performedOn($this)
+            ->withProperties(['reason' => $reason ?? 'No se proporcionó motivo'])
+            ->log('Usuario eliminado definitivamente');
     }
 }

@@ -34,6 +34,12 @@
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">por página</span>
                     </div>
 
+                    <a href="{{ route('clients.trash') }}" wire:navigate class="btn-secondary">
+                        <i class="bi bi-trash3"></i>
+                        <span class="ml-2">Papelera</span>
+                    </a>
+
+
                     <button type="button" wire:click="create" class="btn-primary">
                         <i class="bi bi-plus-circle-fill"></i>
                         <span class="ml-2">Crear Cliente</span>

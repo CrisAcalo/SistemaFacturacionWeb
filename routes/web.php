@@ -4,6 +4,7 @@ use App\Livewire\Audits\AuditLog;
 use App\Livewire\Invoices\CreateInvoice;
 use App\Livewire\Invoices\ListInvoices;
 use App\Livewire\Products\ListProducts;
+use App\Livewire\Users\UserTrash;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Users\ListUsers;
 
@@ -25,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('users', ListUsers::class)
         ->name('clients.index')
         ->middleware(['can:manage users']);
+    Route::get('users/trash', UserTrash::class)->name('clients.trash')->middleware(['can:manage users']);
 
     Route::get('products', ListProducts::class)
         ->name('products.index')

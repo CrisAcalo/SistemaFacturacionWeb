@@ -7,21 +7,24 @@
             <div class="flex items-center justify-between px-6 py-4 border-b"
                 :class="{
                     'bg-red-600/20 dark:bg-red-700/30 border-red-600/40': {{ $actionType === 'delete' ? 'true' : 'false' }},
-                    'bg-blue-500/20 dark:bg-blue-600/30 border-blue-500/40': {{ $actionType !== 'delete' && !$isEditing ? 'true' : 'false' }},
-                    'bg-amber-400/20 dark:bg-amber-500/30 border-amber-400/40': {{ $actionType !== 'delete' && $isEditing ? 'true' : 'false' }}
+                    'bg-green-500/20 dark:bg-green-600/30 border-green-500/40': {{ $actionType === 'create' ? 'true' : 'false' }},
+                    'bg-blue-500/20 dark:bg-blue-600/30 border-blue-500/40': {{ $actionType !== 'delete' && $actionType !== 'create' && !$isEditing ? 'true' : 'false' }},
+                    'bg-amber-400/20 dark:bg-amber-500/30 border-amber-400/40': {{ $actionType !== 'delete' && $actionType !== 'create' && $isEditing ? 'true' : 'false' }}
                 }">
                 <div class="flex items-center gap-3">
                     <i class="text-2xl"
                         :class="{
                             'bi-trash3-fill text-red-600': {{ $actionType === 'delete' ? 'true' : 'false' }},
-                            'bi-plus-circle-fill text-blue-600': {{ $actionType !== 'delete' && !$isEditing ? 'true' : 'false' }},
-                            'bi-pencil-square text-amber-500': {{ $actionType !== 'delete' && $isEditing ? 'true' : 'false' }}
+                            'bi-plus-circle-fill text-green-600': {{ $actionType === 'create' ? 'true' : 'false' }},
+                            'bi-plus-circle-fill text-blue-600': {{ $actionType !== 'delete' && $actionType !== 'create' && !$isEditing ? 'true' : 'false' }},
+                            'bi-pencil-square text-amber-500': {{ $actionType !== 'delete' && $actionType !== 'create' && $isEditing ? 'true' : 'false' }}
                         }"></i>
                     <h3 class="text-lg font-semibold"
                         :class="{
                             'text-red-700 dark:text-red-300': {{ $actionType === 'delete' ? 'true' : 'false' }},
-                            'text-blue-700 dark:text-blue-300': {{ $actionType !== 'delete' && !$isEditing ? 'true' : 'false' }},
-                            'text-amber-700 dark:text-amber-200': {{ $actionType !== 'delete' && $isEditing ? 'true' : 'false' }}
+                            'text-green-700 dark:text-green-300': {{ $actionType === 'create' ? 'true' : 'false' }},
+                            'text-blue-700 dark:text-blue-300': {{ $actionType !== 'delete' && $actionType !== 'create' && !$isEditing ? 'true' : 'false' }},
+                            'text-amber-700 dark:text-amber-200': {{ $actionType !== 'delete' && $actionType !== 'create' && $isEditing ? 'true' : 'false' }}
                         }">
                         {{ $confirmationTitle }}
                     </h3>

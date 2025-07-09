@@ -77,6 +77,25 @@ class AuditLog extends Component
     // --- MANEJO DEL MODAL ---
 
     /**
+     * Obtiene el nombre de visualización para un evento de auditoría.
+     */
+    public function getEventDisplayName($event)
+    {
+        return match ($event) {
+            'created' => 'Creado',
+            'updated' => 'Actualizado',
+            'deleted' => 'Eliminado',
+            'restored' => 'Restaurado',
+            'forceDeleted' => 'Eliminado Definitivamente',
+            'login' => 'Inicio de Sesión',
+            'logout' => 'Cierre de Sesión',
+            'exported' => 'Exportado',
+            'imported' => 'Importado',
+            default => ucfirst($event),
+        };
+    }
+
+    /**
      * Carga el log seleccionado y abre el modal de detalles.
      * Usa Route Model Binding para inyectar el modelo Activity.
      */

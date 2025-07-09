@@ -31,6 +31,11 @@
                         <option value="updated">Actualizado</option>
                         <option value="deleted">Eliminado</option>
                         <option value="restored">Restaurado</option>
+                        <option value="forceDeleted">Eliminado Definitivamente</option>
+                        <option value="login">Inicio de Sesión</option>
+                        <option value="logout">Cierre de Sesión</option>
+                        <option value="exported">Exportado</option>
+                        <option value="imported">Importado</option>
                     </select>
                 </div>
                 <!-- Filtro por Tipo de Objeto -->
@@ -76,8 +81,14 @@
                                         @if ($log->event === 'created') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
                                         @elseif($log->event === 'updated') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                                         @elseif($log->event === 'deleted') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                                        @elseif($log->event === 'restored') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                        @elseif($log->event === 'forceDeleted') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
+                                        @elseif($log->event === 'login') bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200
+                                        @elseif($log->event === 'logout') bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200
+                                        @elseif($log->event === 'exported') bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200
+                                        @elseif($log->event === 'imported') bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200
                                         @else bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200 @endif">
-                                        {{ ucfirst($log->event) }}
+                                        {{ $this->getEventDisplayName($log->event) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -124,31 +135,39 @@
 
                 <div
                     class="flex items-center justify-between p-4 border-b dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Detalles del Evento de Auditoría
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        Detalles del Evento de Auditoría
                     </h3>
                     <button @click="show = false"
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">×</button>
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl font-bold">
+                        ×
+                    </button>
                 </div>
 
                 <div class="p-6 space-y-4">
-                    <div><strong>Motivo Proporcionado:</strong> <em
-                            class="text-gray-700 dark:text-gray-300">{{ $selectedLog->properties->get('reason', 'No se proporcionó motivo.') }}</em>
+                    <div>
+                        <strong>Motivo Proporcionado:</strong>
+                        <em class="text-gray-700 dark:text-gray-300">
+                            {{ $selectedLog->properties->get('reason', 'No se proporcionó motivo.') }}
+                        </em>
                     </div>
+
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {{-- Datos Antiguos --}}
                         <div>
                             <h4 class="font-semibold text-red-600">Valores Anteriores</h4>
                             @if ($selectedLog->properties->has('old'))
-                                <pre class="p-2 mt-2 text-xs text-white bg-gray-800 rounded-md">@json($selectedLog->properties->get('old'), JSON_PRETTY_PRINT)</pre>
+                                <pre class="p-2 mt-2 text-xs text-white bg-gray-800 rounded-md overflow-x-auto">{{ json_encode($selectedLog->properties->get('old'), JSON_PRETTY_PRINT) }}</pre>
                             @else
                                 <p class="text-sm text-gray-500">N/A (Evento de creación)</p>
                             @endif
                         </div>
+
                         {{-- Datos Nuevos --}}
                         <div>
                             <h4 class="font-semibold text-green-600">Valores Nuevos</h4>
                             @if ($selectedLog->properties->has('attributes'))
-                                <pre class="p-2 mt-2 text-xs text-white bg-gray-800 rounded-md">@json($selectedLog->properties->get('attributes'), JSON_PRETTY_PRINT)</pre>
+                                <pre class="p-2 mt-2 text-xs text-white bg-gray-800 rounded-md overflow-x-auto">{{ json_encode($selectedLog->properties->get('attributes'), JSON_PRETTY_PRINT) }}</pre>
                             @else
                                 <p class="text-sm text-gray-500">N/A (Evento de eliminación)</p>
                             @endif
