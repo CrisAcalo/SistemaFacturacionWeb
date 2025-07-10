@@ -32,11 +32,14 @@
         </div>
 
         @can('manage users')
-            {{-- Usamos el mismo permiso para mostrar/ocultar el enlace --}}
             <x-sidebar-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
                 <i class="bi bi-people-fill"></i>
                 <span>Clientes</span>
             </x-sidebar-link>
+            {{-- <x-sidebar-link :href="route('clients.trash')" :active="request()->routeIs('clients.trash')">
+                <i class="bi bi-people-fill"></i>
+                <span>Papelera Clientes</span>
+            </x-sidebar-link> --}}
         @endcan
 
         @can('manage products')

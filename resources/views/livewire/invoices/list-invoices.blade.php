@@ -80,7 +80,7 @@
                                         class="font-medium text-secondary hover:text-secondary/80">
                                         Ver
                                     </button>
-                                    @if ($invoice->status !== 'cancelled')
+                                    @if ($invoice->status !== 'Anulada')
                                         <button wire:click="confirmCancel({{ $invoice->id }})"
                                             class="ml-4 font-medium text-danger hover:text-danger/80">Anular</button>
                                     @endif
@@ -179,7 +179,7 @@
                             <span>Total:</span>
                             <span x-text="'$' + Number(invoice.total).toFixed(2)"></span>
                         </div>
-                        <template x-if="invoice.status === 'cancelled'">
+                        <template x-if="invoice.status === 'Anulada'">
                             <p class="mt-2 text-xs text-center text-white bg-red-500 rounded-full">
                                 ANULADA
                             </p>
