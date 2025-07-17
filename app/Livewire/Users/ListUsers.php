@@ -29,6 +29,12 @@ class ListUsers extends Component
     //#[Url(history: true)]
     public int $perPage = 10;
     public array $perPageOptions = [10, 25, 50, 100];
+    public string $statusFilter = 'all'; // Filtro de estado
+    public array $statusOptions = [
+        'all' => 'Todos',
+        'active' => 'Activos',
+        'inactive' => 'Inactivos'
+    ];
 
     // Propiedades para el control de los modales
     public bool $showFormModal = false;
@@ -54,10 +60,13 @@ class ListUsers extends Component
         }
 
         $query = User::query()
-            ->select(['id', 'name', 'email'])
+            ->select(['id', 'name', 'email', 'status'])
             ->with(['roles' => fn($q) => $q->select('name')])
             ->when($this->search, function ($query) {
                 $query->where(fn($q) => $q->where('name', 'like', "%{$this->search}%")->orWhere('email', 'like', "%{$this->search}%"));
+            })
+            ->when($this->statusFilter !== 'all', function ($query) {
+                $query->where('status', $this->statusFilter);
             });
 
         $users = $query->latest()->paginate($this->perPage);
@@ -66,6 +75,7 @@ class ListUsers extends Component
         return view('livewire.users.list-users', [
             'users' => $users,
             'allRoles' => $allRoles,
+            'statusOptions' => $this->statusOptions,
         ]);
     }
 
@@ -74,6 +84,10 @@ class ListUsers extends Component
         $this->resetPage();
     }
     public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedStatusFilter(): void
     {
         $this->resetPage();
     }
@@ -113,6 +127,33 @@ class ListUsers extends Component
         $this->showConfirmationModal = true;
     }
 
+    public function toggleUserStatus(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            $this->dispatch('show-toast', message: 'No puedes cambiar tu propio estado.', type: 'error');
+            return;
+        }
+
+        $oldStatus = $user->status;
+        $newStatus = $user->status === 'active' ? 'inactive' : 'active';
+        $user->update(['status' => $newStatus]);
+
+        // Disparar evento para manejar la invalidación de sesiones
+        event(new \App\Events\UserStatusChanged($user, $oldStatus, $newStatus));
+
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->withProperties([
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus
+            ])
+            ->log('Estado de usuario cambiado');
+
+        $statusText = $newStatus === 'active' ? 'activado' : 'desactivado';
+        $this->dispatch('show-toast', message: "Cliente {$statusText} correctamente.", type: 'success');
+    }
+
     // --- LÓGICA DE CONFIRMACIÓN DE DOS PASOS ---
 
     public function requestConfirmation()
@@ -148,7 +189,7 @@ class ListUsers extends Component
     private function saveUser()
     {
         $user = $this->form->editingUser;
-        $data = $this->form->only(['name', 'email']);
+        $data = $this->form->only(['name', 'email', 'status']);
         if ($this->form->password) {
             $data['password'] = Hash::make($this->form->password);
         }
