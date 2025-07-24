@@ -72,7 +72,7 @@
                 <div class="flex justify-end gap-3 pt-4">
                     <button type="button" @click="show = false" class="btn-secondary transition">Cancelar</button>
                     <button wire:click="executeAction"
-                        class="{{ $confirmationButtonColor }} inline-flex items-center gap-2 px-4 py-2 font-bold text-white rounded-md transition disabled:opacity-50">
+                        class="bg-gray-600 hover:bg-gray-700 hover:text-white inline-flex items-center gap-2 px-4 py-2 font-bold rounded-md transition disabled:opacity-50">
                         <i class="bi bi-check-circle"></i> {{ $confirmationButtonText }}
                     </button>
                 </div>

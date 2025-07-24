@@ -69,6 +69,52 @@
                     <input wire:model="form.password_confirmation" id="form.password_confirmation" type="password"
                         class="block w-full mt-1 input-style bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500">
                 </div>
+                <!-- Estado -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Estado del Usuario</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" wire:model="form.status" value="active" name="status"
+                                class="sr-only peer">
+                            <div class="flex items-center justify-center p-4 border-2 rounded-lg transition-all duration-200
+                                border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
+                                peer-checked:border-green-500 peer-checked:bg-green-50 dark:peer-checked:bg-green-900/20
+                                hover:border-green-300 dark:hover:border-green-600">
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center w-8 h-8 mx-auto mb-2 rounded-full
+                                        bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-300">
+                                        <i class="bi bi-check-circle text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300
+                                        peer-checked:text-green-700 dark:peer-checked:text-green-300">Activo</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">El usuario puede acceder al sistema</p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="relative cursor-pointer">
+                            <input type="radio" wire:model="form.status" value="inactive" name="status"
+                                class="sr-only peer">
+                            <div class="flex items-center justify-center p-4 border-2 rounded-lg transition-all duration-200
+                                border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
+                                peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20
+                                hover:border-red-300 dark:hover:border-red-600">
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center w-8 h-8 mx-auto mb-2 rounded-full
+                                        bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-300">
+                                        <i class="bi bi-x-circle text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300
+                                        peer-checked:text-red-700 dark:peer-checked:text-red-300">Inactivo</span>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">El usuario no puede acceder</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    @error('form.status')
+                        <span class="text-xs text-red-500 dark:text-red-400 mt-2 block">{{ $message }}</span>
+                    @enderror
+                </div>
                 <!-- Roles -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Roles</label>

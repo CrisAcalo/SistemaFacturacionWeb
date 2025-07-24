@@ -17,28 +17,33 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // --- Permisos de Usuarios ---
-        $manageUsersPermission = Permission::create(['name' => 'manage users']);
-        $adminRole = Role::create(['name' => 'Administrador']);
+        $manageUsersPermission = Permission::firstOrCreate(['name' => 'manage users']);
+        $adminRole = Role::firstOrCreate(['name' => 'Administrador']);
         $adminRole->givePermissionTo($manageUsersPermission);
-        $secretarioRole = Role::create(['name' => 'Secretario']);
+        $secretarioRole = Role::firstOrCreate(['name' => 'Secretario']);
         $secretarioRole->givePermissionTo($manageUsersPermission);
 
         // --- Permisos de Productos ---
-        $manageProductsPermission = Permission::create(['name' => 'manage products']);
-        $bodegaRole = Role::create(['name' => 'Bodega']);
+        $manageProductsPermission = Permission::firstOrCreate(['name' => 'manage products']);
+        $bodegaRole = Role::firstOrCreate(['name' => 'Bodega']);
         $bodegaRole->givePermissionTo($manageProductsPermission);
 
         // --- Permisos de Facturación ---
-        $manageInvoicesPermission = Permission::create(['name' => 'manage invoices']);
-        $ventasRole = Role::create(['name' => 'Ventas']);
+        $manageInvoicesPermission = Permission::firstOrCreate(['name' => 'manage invoices']);
+        $ventasRole = Role::firstOrCreate(['name' => 'Ventas']);
         $ventasRole->givePermissionTo($manageInvoicesPermission);
+
         // --- Permisos de Auditoría ---
-        $viewAuditsPermission = Permission::create(['name' => 'view audits']);
+        $viewAuditsPermission = Permission::firstOrCreate(['name' => 'view audits']);
+
+        // --- Permisos de Tokens API ---
+        $manageTokensPermission = Permission::firstOrCreate(['name' => 'manage tokens']);
 
         // Asignar el nuevo permiso solo al Administrador
         $adminRole = Role::where('name', 'Administrador')->first();
         if ($adminRole) {
             $adminRole->givePermissionTo($viewAuditsPermission);
+            $adminRole->givePermissionTo($manageTokensPermission);
         }
         // El Admin debería poder hacer todo
         $adminRole->givePermissionTo($manageProductsPermission);

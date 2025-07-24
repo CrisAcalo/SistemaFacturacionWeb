@@ -36,10 +36,6 @@
                 <i class="bi bi-people-fill"></i>
                 <span>Clientes</span>
             </x-sidebar-link>
-            {{-- <x-sidebar-link :href="route('clients.trash')" :active="request()->routeIs('clients.trash')">
-                <i class="bi bi-people-fill"></i>
-                <span>Papelera Clientes</span>
-            </x-sidebar-link> --}}
         @endcan
 
         @can('manage products')
@@ -69,6 +65,13 @@
             <x-sidebar-link :href="route('audits.index')" :active="request()->routeIs('audits.*')">
                 <i class="bi bi-shield-lock-fill"></i>
                 <span>Auditoría</span>
+            </x-sidebar-link>
+        @endcan
+
+        @can('manage tokens')
+            <x-sidebar-link :href="route('tokens.index')" :active="request()->routeIs('tokens.*')">
+                <i class="bi bi-key-fill"></i>
+                <span>API Tokens</span>
             </x-sidebar-link>
         @endcan
     </nav>

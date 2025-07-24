@@ -17,6 +17,7 @@ class UserFormObject extends Form
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public string $status = 'active';
     public array $userRoles = [];
 
     /**
@@ -37,6 +38,7 @@ class UserFormObject extends Form
                 'confirmed', // Requiere que exista un campo 'password_confirmation' con el mismo valor
                 Password::min(8)->mixedCase()->numbers()->symbols() // Reglas de contraseña robustas
             ],
+            'status' => ['required', 'in:active,inactive'],
             'userRoles' => ['required', 'array', 'min:1'],
             'userRoles.*' => ['exists:roles,name'], // Valida que cada rol en el array exista en la BD
         ];
@@ -54,6 +56,7 @@ class UserFormObject extends Form
         if ($user) {
             $this->name = $user->name;
             $this->email = $user->email;
+            $this->status = $user->status ?? 'active';
             $this->userRoles = $user->roles->pluck('name')->all();
         }
     }
