@@ -99,10 +99,13 @@ class ListInvoices extends Component
     {
         try {
             DB::transaction(function () {
+                /** @var \App\Models\InvoiceItem $item */
                 foreach ($this->invoiceToCancel->items()->with('product')->get() as $item) {
                     // Verificamos que el producto aún exista antes de intentar incrementar el stock
-                    if ($item->product) {
-                        $item->product->increment('stock', $item->quantity);
+                    /** @var \App\Models\Product|null $product */
+                    $product = $item->product;
+                    if ($product) {
+                        $product->increment('stock', $item->quantity);
                     }
                 }
 
@@ -128,13 +131,5 @@ class ListInvoices extends Component
         $this->confirmationTitle = $title;
         $this->confirmationButtonText = $buttonText;
         $this->confirmationButtonColor = $buttonColor;
-    }
-
-    private function resetActionState()
-    {
-        $this->showConfirmationModal = false;
-        $this->confirmation->reset();
-        $this->invoiceToCancel = null;
-        $this->actionType = '';
     }
 }

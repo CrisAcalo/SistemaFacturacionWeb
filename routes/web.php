@@ -36,10 +36,10 @@ Route::get('/dashboard', function () {
         'newUsersLast30Days' => $newUsersLast30Days,
         'recentUsers' => $recentUsers,
     ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Route::view('dashboard', 'dashboard')->name('dashboard'); // <-- ELIMINA ESTA LÍNEA
 
     Route::view('profile', 'profile')->name('profile');

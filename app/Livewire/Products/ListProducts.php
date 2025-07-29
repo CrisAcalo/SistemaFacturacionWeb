@@ -89,7 +89,7 @@ class ListProducts extends Component
                     $base = str_pad($base, 3, 'X');
                 }
                 $sku = $base . '-' . rand(1000, 9999);
-                $barcode = '786' . str_pad(rand(0, 999999999), 9, '0', STR_PAD_LEFT);
+                $barcode = '786' . str_pad((string) rand(0, 999999999), 9, '0', STR_PAD_LEFT);
             }
 
             // Actualizamos las propiedades del backend

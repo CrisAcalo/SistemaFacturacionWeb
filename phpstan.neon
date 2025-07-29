@@ -3,16 +3,19 @@ includes:
     - vendor/nesbot/carbon/extension.neon
 
 parameters:
-
     paths:
-        - app/
-#        - resources/views/
+#        - app/
+        - resources/views/
 
-    # Level 10 is the highest level
+    # Level 5 es un buen punto de partida
     level: 5
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
-#
+    ignoreErrors:
+        -
+            # Esta regla ahora usa ".*" para capturar tanto los componentes
+            # con atributos como los que no los tienen.
+            message: '#Expression "new .*class extends \\Livewire\\Volt\\Component.+" on a separate line does not do anything.#'
+            path: '*.blade.php'
+
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php

@@ -52,7 +52,7 @@ class ProductFormObject extends Form
             $this->description = $product->description;
             $this->stock = $product->stock;
             // Formateamos el precio para asegurar que tenga 2 decimales en el input
-            $this->price = number_format($product->price, 2, '.', '');
+            $this->price = number_format((float) $product->price, 2, '.', '');
         }
     }
 }

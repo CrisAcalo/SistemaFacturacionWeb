@@ -50,7 +50,7 @@ abstract class BaseModel extends Model
      * Generar comentarios de auditoría automáticamente.
      *
      * @param string $eventName
-     * @return string
+     * @return array
      */
     public function generateTags(string $eventName): array
     {

@@ -188,7 +188,6 @@ class CreateInvoice extends Component
             'items' => 'required|array|min:1'
         ]);
 
-        $this->setModalTheme('create');
         $this->setupConfirmationModal(
             title: 'Confirmar Generación de Factura',
             buttonText: 'Confirmar y Guardar',
@@ -261,10 +260,6 @@ class CreateInvoice extends Component
     {
         $this->showConfirmationModal = false;
         $this->confirmation->reset();
-    }
-
-    private function setModalTheme(string $type)
-    { /* Opcional para este modal */
     }
 
     public function render()
