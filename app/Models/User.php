@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -106,5 +107,14 @@ class User extends Authenticatable implements MustVerifyEmail
             ->performedOn($this)
             ->withProperties(['reason' => $reason ?? 'No se proporcionó motivo'])
             ->log('Usuario eliminado definitivamente');
+    }
+
+    protected function gate(): void
+    {
+        Gate::define('viewTelescope', function ($user) {
+            return in_array($user->email, [
+                'admin@example.com',
+            ]);
+        });
     }
 }

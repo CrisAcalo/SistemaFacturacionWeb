@@ -4,18 +4,19 @@ includes:
 
 parameters:
     paths:
+        - routes/
 #        - app/
-        - resources/views/
+#        - resources/views/
 
     # Level 5 es un buen punto de partida
     level: 5
 
-    ignoreErrors:
-        -
-            # Esta regla ahora usa ".*" para capturar tanto los componentes
-            # con atributos como los que no los tienen.
-            message: '#Expression "new .*class extends \\Livewire\\Volt\\Component.+" on a separate line does not do anything.#'
-            path: '*.blade.php'
+#    ignoreErrors:
+#        -
+#            # Esta regla ahora usa ".*" para capturar tanto los componentes
+#            # con atributos como los que no los tienen.
+#            message: '#Expression "new .*class extends \\Livewire\\Volt\\Component.+" on a separate line does not do anything.#'
+#            path: '*.blade.php'
 
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php
