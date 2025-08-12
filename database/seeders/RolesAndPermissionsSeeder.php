@@ -33,6 +33,11 @@ class RolesAndPermissionsSeeder extends Seeder
         $ventasRole = Role::firstOrCreate(['name' => 'Ventas']);
         $ventasRole->givePermissionTo($manageInvoicesPermission);
 
+        // --- Permisos de Pagos ---
+        $managePaymentsPermission = Permission::firstOrCreate(['name' => 'manage payments']);
+        $pagosRole = Role::firstOrCreate(['name' => 'Pagos']);
+        $pagosRole->givePermissionTo($managePaymentsPermission);
+
         // --- Permisos de Auditoría ---
         $viewAuditsPermission = Permission::firstOrCreate(['name' => 'view audits']);
 
@@ -48,5 +53,6 @@ class RolesAndPermissionsSeeder extends Seeder
         // El Admin debería poder hacer todo
         $adminRole->givePermissionTo($manageProductsPermission);
         $adminRole->givePermissionTo($manageInvoicesPermission); // <-- Añadir
+        $adminRole->givePermissionTo($managePaymentsPermission); // <-- Añadir permisos de pagos
     }
 }

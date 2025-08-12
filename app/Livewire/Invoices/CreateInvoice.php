@@ -35,9 +35,8 @@ class CreateInvoice extends Component
     public float $subtotal = 0.00;
     public float $taxAmount = 0.00;
     public float $total = 0.00;
-    public float $taxRate = 0.12; // Tasa de impuesto (12%)
+    public float $taxRate = 0.12;
 
-    // Control de modales y temas para confirmation-modal
     public bool $showConfirmationModal = false;
     public string $confirmationTitle = '';
     public string $confirmationButtonText = '';
@@ -177,7 +176,6 @@ class CreateInvoice extends Component
             }
         }
 
-        // Llenar el form object y validarlo
         $this->form->items = $this->invoiceItems;
         $this->form->subtotal = $this->subtotal;
         $this->form->taxAmount = $this->taxAmount;
@@ -210,7 +208,7 @@ class CreateInvoice extends Component
                     'subtotal' => $this->form->subtotal,
                     'tax' => $this->form->taxAmount,
                     'total' => $this->form->total,
-                    'status' => 'Pagada',
+                    'status' => 'Pendiente',
                     'notes' => $this->confirmation->reason,
                 ]);
 

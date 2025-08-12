@@ -14,29 +14,14 @@ class TokenController extends Controller
     {
         try {
             $user = $request->user();
-            $bearerToken = $request->bearerToken();
 
-            if (!$bearerToken) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token no proporcionado'
-                ], 401);
-            }
-
-            $token = PersonalAccessToken::where('plain_text_token', $bearerToken)->first();
+            $token = $user->currentAccessToken();
 
             if (!$token) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Token no válido'
-                ], 401);
-            }
-
-            if (!$token->isActive()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Token inactivo o expirado'
-                ], 401);
+                    'message' => 'No se pudo obtener información del token'
+                ], 500);
             }
 
             $token->update(['last_used_at' => now()]);
@@ -48,20 +33,17 @@ class TokenController extends Controller
                     'token_info' => [
                         'id' => $token->id,
                         'name' => $token->name,
-                        'description' => $token->description,
                         'abilities' => $token->abilities,
                         'created_at' => $token->created_at->format('Y-m-d H:i:s'),
                         'expires_at' => $token->expires_at?->format('Y-m-d H:i:s'),
                         'last_used_at' => $token->last_used_at?->format('Y-m-d H:i:s'),
-                        'is_active' => $token->is_active,
-                        'status' => $token->status,
                     ],
                     'user_info' => [
                         'id' => $user->id,
                         'name' => $user->name,
                         'email' => $user->email,
                         'status' => $user->status ?? 'active',
-                        'roles' => $user->roles->pluck('name')->toArray(),
+                        'roles' => method_exists($user, 'roles') ? $user->roles->pluck('name')->toArray() : [],
                     ],
                     'request_info' => [
                         'timestamp' => now()->format('Y-m-d H:i:s'),
@@ -112,17 +94,16 @@ class TokenController extends Controller
 
             $invoices = $query->paginate($perPage, ['*'], 'page', $page);
 
-            $bearerToken = $request->bearerToken();
-            if ($bearerToken) {
-                PersonalAccessToken::where('plain_text_token', $bearerToken)
-                    ->update(['last_used_at' => now()]);
+            $token = $user->currentAccessToken();
+            if ($token) {
+                $token->update(['last_used_at' => now()]);
             }
 
             $statistics = [
-                'total_invoices' => Invoice::where('user_id', $user->id)->count(),
-                'total_amount' => Invoice::where('user_id', $user->id)->sum('total'),
-                'paid_invoices' => Invoice::where('user_id', $user->id)->where('status', 'paid')->count(),
-                'pending_invoices' => Invoice::where('user_id', $user->id)->whereIn('status', ['draft', 'sent'])->count(),
+                'total_invoices' => Invoice::where('client_id', $user->id)->count(),
+                'total_amount' => Invoice::where('client_id', $user->id)->sum('total'),
+                'paid_invoices' => Invoice::where('client_id', $user->id)->where('status', 'Pagada')->count(),
+                'pending_invoices' => Invoice::where('client_id', $user->id)->whereIn('status', ['Pendiente'])->count(),
             ];
 
             return response()->json([

@@ -45,5 +45,13 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
         $ventas->assignRole('Ventas');
+
+        // Usuario Pagos
+        $pagos = User::create([
+            'name' => 'Pagos User',
+            'email' => 'pagos@example.com',
+            'password' => Hash::make('password'),
+        ]);
+        $pagos->assignRole('Pagos');
     }
 }

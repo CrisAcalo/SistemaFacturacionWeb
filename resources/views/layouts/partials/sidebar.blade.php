@@ -57,6 +57,14 @@
                 <span>Nueva Factura</span>
             </x-sidebar-link>
         @endcan
+
+        @can('manage payments')
+            <x-sidebar-link :href="route('payments.index')" :active="request()->routeIs('payments.*')">
+                <i class="bi bi-credit-card-fill"></i>
+                <span>Gestión de Pagos</span>
+            </x-sidebar-link>
+        @endcan
+
         @can('view audits')
             <div class="px-6 py-4">
                 <hr class="border-gray-700">

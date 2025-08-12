@@ -6,6 +6,7 @@ use App\Livewire\Invoices\ListInvoices;
 use App\Livewire\Products\ListProducts;
 use App\Livewire\Tokens\ListTokens;
 use App\Livewire\Users\UserTrash;
+use App\Livewire\Payments\ListPayments;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Users\ListUsers;
 use App\Models\User;
@@ -36,10 +37,10 @@ Route::get('/dashboard', function () {
         'newUsersLast30Days' => $newUsersLast30Days,
         'recentUsers' => $recentUsers,
     ]);
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth', 'check.user.status'])->name('dashboard');
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.user.status'])->group(function () {
     // Route::view('dashboard', 'dashboard')->name('dashboard'); // <-- ELIMINA ESTA LÍNEA
 
     Route::view('profile', 'profile')->name('profile');
@@ -68,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('api-tokens', ListTokens::class)
         ->name('tokens.index')
         ->middleware(['can:manage tokens']);
+
+    // --- RUTAS PARA GESTIÓN DE PAGOS ---
+    Route::get('payments', ListPayments::class)
+        ->name('payments.index')
+        ->middleware(['can:manage payments']);
 })->name('autenticado');
 
 require __DIR__ . '/auth.php';

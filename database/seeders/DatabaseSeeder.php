@@ -25,5 +25,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
         Product::factory()->count(30)->create();
+
+        // Crear facturas después de tener usuarios y productos
+        $this->call([
+            InvoiceSeeder::class,
+        ]);
     }
 }
