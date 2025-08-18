@@ -226,7 +226,7 @@ class ListPayments extends Component
             ->log('Pago aprobado manualmente');
 
         $this->dispatch('show-toast', message: 'Pago aprobado exitosamente. Se ha actualizado el estado de la factura.', type: 'success');
-        
+
         // Refrescar la vista para mostrar cambios
         $this->resetPage();
     }
@@ -244,7 +244,7 @@ class ListPayments extends Component
             ->log('Pago rechazado manualmente');
 
         $this->dispatch('show-toast', message: 'Pago rechazado exitosamente. Se ha actualizado el estado de la factura.', type: 'success');
-        
+
         // Refrescar la vista para mostrar cambios
         $this->resetPage();
     }

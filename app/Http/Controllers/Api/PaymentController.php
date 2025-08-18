@@ -256,4 +256,160 @@ class PaymentController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Validar un pago (aprobar o rechazar) - Solo administradores
+     */
+    public function validatePayment(Request $request, int $paymentId): JsonResponse
+    {
+        try {
+            $user = $request->user();
+
+            // Verificar que el usuario tenga permisos de administrador para gestionar pagos
+            if (!$user->hasAnyPermission(['manage payments', 'admin.full'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes permisos para validar pagos'
+                ], 403);
+            }
+
+            // Validar datos de entrada
+            $validatedData = $request->validate([
+                'action' => 'required|string|in:approve,reject',
+                'validation_notes' => 'nullable|string|max:1000|required_if:action,reject'
+            ], [
+                'action.required' => 'La acción es requerida.',
+                'action.in' => 'La acción debe ser "approve" o "reject".',
+                'validation_notes.required_if' => 'Las notas de validación son requeridas para rechazar un pago.',
+                'validation_notes.max' => 'Las notas no pueden tener más de 1000 caracteres.'
+            ]);
+
+            // Buscar el pago
+            $payment = Payment::with(['invoice', 'client'])->find($paymentId);
+
+            if (!$payment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pago no encontrado'
+                ], 404);
+            }
+
+            // Verificar que el pago esté pendiente
+            if (!$payment->isPending()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Solo se pueden validar pagos en estado pendiente',
+                    'data' => [
+                        'payment_id' => $payment->id,
+                        'current_status' => $payment->status
+                    ]
+                ], 422);
+            }
+
+            // Ejecutar la acción
+            $success = false;
+            $message = '';
+
+            if ($validatedData['action'] === 'approve') {
+                $success = $payment->approve($user, $validatedData['validation_notes'] ?? null);
+                $message = $success ? 'Pago aprobado exitosamente' : 'Error al aprobar el pago';
+                
+                // Log de actividad
+                activity()
+                    ->performedOn($payment)
+                    ->causedBy($user)
+                    ->withProperties(['notes' => $validatedData['validation_notes'] ?? 'Aprobado vía API'])
+                    ->log('Pago aprobado vía API');
+
+            } else { // reject
+                $success = $payment->reject($user, $validatedData['validation_notes']);
+                $message = $success ? 'Pago rechazado exitosamente' : 'Error al rechazar el pago';
+                
+                // Log de actividad
+                activity()
+                    ->performedOn($payment)
+                    ->causedBy($user)
+                    ->withProperties(['notes' => $validatedData['validation_notes']])
+                    ->log('Pago rechazado vía API');
+            }
+
+            if (!$success) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al procesar la validación del pago'
+                ], 500);
+            }
+
+            // Recargar el pago con las relaciones actualizadas
+            $payment->refresh();
+            $payment->load(['invoice', 'client', 'validator']);
+
+            // Calcular estadísticas actualizadas de la factura
+            $invoice = $payment->invoice;
+            $totalValidated = $invoice->payments()->where('status', 'validado')->sum('amount');
+            $totalPending = $invoice->payments()->where('status', 'pendiente')->sum('amount');
+            $totalRejected = $invoice->payments()->where('status', 'rechazado')->sum('amount');
+            $remainingAmount = $invoice->total - $totalValidated;
+
+            // Actualizar última vez usado del token
+            $token = $user->currentAccessToken();
+            if ($token) {
+                $token->update(['last_used_at' => now()]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'data' => [
+                    'payment' => [
+                        'id' => $payment->id,
+                        'invoice_id' => $payment->invoice_id,
+                        'invoice_number' => $payment->invoice->invoice_number,
+                        'client_name' => $payment->client->name,
+                        'client_email' => $payment->client->email,
+                        'payment_type' => $payment->payment_type,
+                        'transaction_number' => $payment->transaction_number,
+                        'amount' => number_format((float) $payment->amount, 2),
+                        'observations' => $payment->observations,
+                        'status' => $payment->status,
+                        'validated_at' => $payment->validated_at?->format('Y-m-d H:i:s'),
+                        'validated_by' => $payment->validator?->name,
+                        'validation_notes' => $payment->validation_notes,
+                        'created_at' => $payment->created_at->format('Y-m-d H:i:s'),
+                        'updated_at' => $payment->updated_at->format('Y-m-d H:i:s'),
+                    ],
+                    'invoice_summary' => [
+                        'invoice_number' => $invoice->invoice_number,
+                        'total_factura' => number_format($invoice->total, 2),
+                        'total_validado' => number_format($totalValidated, 2),
+                        'total_pendiente' => number_format($totalPending, 2),
+                        'total_rechazado' => number_format($totalRejected, 2),
+                        'saldo_pendiente' => number_format($remainingAmount, 2),
+                        'status_factura' => $invoice->status,
+                    ],
+                    'validation_info' => [
+                        'action_performed' => $validatedData['action'],
+                        'validated_by' => $user->name,
+                        'validated_by_email' => $user->email,
+                        'validation_date' => now()->format('Y-m-d H:i:s'),
+                        'notes' => $validatedData['validation_notes'] ?? null,
+                    ]
+                ]
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos de validación inválidos',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al validar el pago',
+                'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], 500);
+        }
+    }
 }

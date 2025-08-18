@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Invoice extends Model
 {
+    use SoftDeletes, LogsActivity;
     protected $fillable = [
         'invoice_number',
         'user_id',
@@ -24,6 +28,17 @@ class Invoice extends Model
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    /**
+     * Configure activity logging
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['invoice_number', 'user_id', 'client_id', 'subtotal', 'tax', 'total', 'status', 'notes'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     // Configuración para redondeo automático
     protected static function boot()

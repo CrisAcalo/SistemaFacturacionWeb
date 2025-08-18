@@ -112,4 +112,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Role
+    |--------------------------------------------------------------------------
+    |
+    | This option defines the default role assigned to new users when they
+    | register via API or web interface.
+    |
+    */
+
+    'default_role' => env('AUTH_DEFAULT_ROLE', 'Cliente'),
+
 ];
