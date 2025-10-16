@@ -50,11 +50,21 @@
                                         {{ $invoice->invoice_number }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 dark:text-gray-100">{{ $invoice->client->name }}
+                                    <div class="text-sm text-gray-900 dark:text-gray-100">
+                                        @if($invoice->client)
+                                            {{ $invoice->client->name }}
+                                        @else
+                                            <span class="italic text-gray-400">Cliente eliminado</span>
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-500 dark:text-gray-300">{{ $invoice->user->name }}
+                                    <div class="text-sm text-gray-500 dark:text-gray-300">
+                                        @if($invoice->user)
+                                            {{ $invoice->user->name }}
+                                        @else
+                                            <span class="italic text-gray-400">Usuario eliminado</span>
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center whitespace-nowrap">
@@ -137,10 +147,22 @@
                 <template x-if="invoice">
                     <div>
                         <div class="mb-2 text-sm text-gray-700 dark:text-gray-300">
-                            <strong>Cliente:</strong> <span x-text="invoice.client.name"></span>
+                            <strong>Cliente:</strong>
+                            <template x-if="invoice.client">
+                                <span x-text="invoice.client.name"></span>
+                            </template>
+                            <template x-if="!invoice.client">
+                                <span class="italic text-gray-400">Cliente eliminado</span>
+                            </template>
                         </div>
                         <div class="mb-2 text-sm text-gray-700 dark:text-gray-300">
-                            <strong>Vendedor:</strong> <span x-text="invoice.user.name"></span>
+                            <strong>Vendedor:</strong>
+                            <template x-if="invoice.user">
+                                <span x-text="invoice.user.name"></span>
+                            </template>
+                            <template x-if="!invoice.user">
+                                <span class="italic text-gray-400">Usuario eliminado</span>
+                            </template>
                         </div>
                         <div class="mb-2 text-sm text-gray-700 dark:text-gray-300">
                             <strong>Fecha:</strong> <span

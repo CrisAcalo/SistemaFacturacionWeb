@@ -30,8 +30,8 @@ Route::prefix('auth')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 });
 
-// --- RUTAS PROTEGIDAS (REQUIEREN AUTENTICACIÓN) ---
-Route::middleware('auth:sanctum')->group(function () {
+// --- RUTAS PROTEGIDAS (REQUIEREN AUTENTICACIÓN Y USUARIO ACTIVO) ---
+Route::middleware(['auth:sanctum', 'ensure.user.is.active.api'])->group(function () {
 
     // --- RUTAS DE AUTENTICACIÓN PROTEGIDAS ---
     Route::prefix('auth')->group(function () {

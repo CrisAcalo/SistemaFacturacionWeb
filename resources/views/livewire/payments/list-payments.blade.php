@@ -131,10 +131,18 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $payment->client->name }}
+                                            @if($payment->client)
+                                                {{ $payment->client->name }}
+                                            @else
+                                                <span class="italic text-gray-400">Cliente eliminado</span>
+                                            @endif
                                         </div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $payment->client->email }}
+                                            @if($payment->client)
+                                                {{ $payment->client->email }}
+                                            @else
+                                                <span class="italic text-gray-400">-</span>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -199,6 +207,10 @@
                                             @if($payment->validator)
                                                 <div class="text-xs text-gray-400 dark:text-gray-500">
                                                     por {{ $payment->validator->name }}
+                                                </div>
+                                            @elseif($payment->validator_id)
+                                                <div class="text-xs text-gray-400 dark:text-gray-500">
+                                                    por <span class="italic">Usuario eliminado</span>
                                                 </div>
                                             @endif
                                         @endif

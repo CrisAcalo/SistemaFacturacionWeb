@@ -138,16 +138,27 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center space-x-2">
                                         <div class="flex-shrink-0 w-8 h-8">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
-                                                {{ strtoupper(substr($token->tokenable->name, 0, 2)) }}
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                                                @if($token->tokenable)
+                                                    {{ strtoupper(substr($token->tokenable->name, 0, 2)) }}
+                                                @else
+                                                    --
+                                                @endif
                                             </div>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                {{ $token->tokenable->name }}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $token->tokenable->email }}</div>
+                                            @if($token->tokenable)
+                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                    {{ $token->tokenable->name }}
+                                                </div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ $token->tokenable->email }}
+                                                </div>
+                                            @else
+                                                <div class="text-sm font-medium text-gray-500 dark:text-gray-400 italic">
+                                                    Usuario eliminado
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </td>
